@@ -1,0 +1,511 @@
+EXERCICIOS COMENTADOS DE PROLOG
+
+%telefone(P,T):-
+%o n. de telefone da casa da pessoa P e 'T.
+telefone(maria,123).
+telefone(marco,345).
+telefone(pedro,456).
+telefone(ana,567).
+telefone(juliana,678).
+
+%visita(X,Y):-
+%a pessoa X está visitando a pessoa Y
+visita(juliana,maria).
+visita(ana,joaquim).
+visita(marco,juliana).
+visita(pedro,juliana).
+visita(tiago,juliana).
+
+%emCasa(X) :- está em casa.
+emCasa(joaquim).
+emCasa(maria).
+
+acompanhada(P) :-
+    visita(_,P).
+
+inconsistente :-
+    emCasa(X),
+    visita(X,_).
+em_casa_de(X,Y):-
+    visita(X,Y),
+    emCasa(Y).
+em_casa_de(X,Y) :-
+    visita(X,Z),
+    em_casa_de(Z,Y).
+
+contato(X,Y):-
+    em_casa_de(X,Z),
+    telefone(Z,Y).
+contato(X,Y):-
+    emCasa(X),
+    telefone(X,Y).
+festeiro(X):-
+    em_casa_de(Y,X),
+    em_casa_de(Z,X),
+    em_casa_de(W,X),
+    Y=\=Z,
+    Z=\=W,
+    Y=\=W.
+
+
+pai(pedro,ana).
+pai(pedro,maria).
+pai(joaquim,pedro).
+
+
+
+
+fatorial(0,1).
+fatorial(X,Y):-
+    X>0,
+    X1 is X-1,
+    fatorial(X1,Y1),
+    Y is X*Y1.
+
+potencia(_,0,1).
+potencia(X,Y,R):-
+    Y>0,
+    Y1 is Y-1,
+    potencia(X,Y1,R1),
+    R is  R1*X.
+
+
+hd([X|_], X).
+tl([_|Y],Y).
+
+tamanho([_], 0).
+tamanho([_|Y], N):-
+    tamanho(Y,M),
+    N is M+1.
+
+soma([X],X).
+soma([X|Y], S):-
+    soma(Y,S2),
+    S is S2+X.
+
+media([X|Y],M):-
+    soma([X|Y],S),
+    tamanho([X|Y],T),
+    M is S/T.
+
+
+
+pertence(X,[X|_]).
+pertence(X,[_|Y]):-
+    pertence(X,Y).
+
+
+ultimo([X],X).
+ultimo([_|Y], U):-
+    ultimo(Y,U).
+
+concatena(L,[],L).
+concatena([],L,L).
+concatena([X|Y],L,[X|R1]):-
+    concatena(Y,L,R1).
+
+
+tira(_,[],[]).
+tira(X,[X|Y],Y).
+tira(X,[Y|Z],[Y|R]):-
+    X \= Y,
+    tira(X,Z,R).
+
+tira_todos(_,[],[]).
+tira_todos(X,[X|Y],R):-
+    tira_todos(X,Y,R).
+tira_todos(X,[Y|Z], [Y|R]):-
+    X \= Y,
+    tira_todos(X,Z, R).
+
+
+
+ordena([],[]).
+ordena([X|Y],R):-
+    ordena(Y,R1),
+    insere(X,R1,R).
+
+
+insere(X,[],[X]).
+insere(X,[Y|Z],[X,Y|Z]):-
+    X =< Y.
+insere(X,[Y|Z],[Y|R]):-
+    X > Y,
+    insere(X,Z,R).
+
+
+sublista([],_).
+sublista([A|B],[C|D]):-
+    pertence(A,[C|D]),
+    sublista(B,[C|D]).
+
+
+
+/*f(x)={ 0, se x<0
+ *     { 2, se x>=0 e <2
+ *     {4, se x>=2
+ */
+
+f(X,0):-
+    X<0,!.
+f(X,2):-
+    X<2,!.
+f(_,4).
+
+
+tira_corte(_,[],[]):-!.
+tira_corte(X,[X|Y], Y):-!.
+tira_corte(X,[Y|Z],[Y|R1]):-
+    tira_corte(X,Z,R1).
+
+p(a).
+p(b).
+q(a).
+q(b).
+q(c).
+
+diferente(X,X):-!,fail.
+diferente(_,_).
+
+
+
+
+
+uniao([],X,X).
+uniao([H1|C1],Y,[H1|L]):-
+    not(pertence(H1,Y)),!,
+    uniao(C1,Y,L).
+uniao([H1|C1],Y, L):-
+    pertence(H1,Y),
+    uniao(C1,Y,L).
+
+intersec([],_,[]).
+intersec([X|Y],L,[X|R]):-
+    pertence(X,L),
+    intersec(Y,L,R).
+intersec([X|Y],L,R):-
+    not(pertence(X,L)),
+    intersec(Y,L,R).
+
+
+
+
+pa(1,I,_,I).
+pa(N,I,R,ANS):-
+    N1 is N-1,
+    pa(N1,I,R,ANS1),
+    ANS is R+ANS1.
+
+paCauda(1,_,_,ACC,ACC).
+paCauda(N,I,R,ACC,ANS):-
+    (N>1),
+    ACC1 is ACC+R,
+    N1 is N-1,
+    paCauda(N1,I,R,ACC1,ANS).
+
+sumPa(A0, R, N, ANS):-
+    paCauda(N,A0,R,A0,AN),
+    ANS is ((A0+AN)*N)/2.
+
+pa_sum(A0, 1, _,A0, A0).
+
+pa_sum(A0, N, R, PA, SUM):-
+    N1 is N-1,
+    pa_sum(A0, N1, R, PA1, SUM1),
+    PA is R+PA1,
+    SUM is SUM1+PA.
+
+pa_sum(A0,N,R,SUM):- %% Tira parametro PA
+    pa_sum(A0,N,R,_,SUM).
+
+
+pertence([X|_],X):- !.
+pertence([_|Y], Z):-
+    pertence(Y,Z).
+
+f(X,0):- (X<3).
+f(X,2):- (X>=3, X<6).
+f(X,4):- (X>=6).
+
+
+n_esimo(1,[X|_], X).
+
+n_esimo(N,[_|Y], R):-
+	N1 is N-1,
+	n_esimo(N1,Y,R).
+
+size_list([], 0).
+size_list([_|Y], R):-
+	size_list(Y, R1),
+	R is R1+1.
+
+size_list_tail([], ACC,  ACC).
+size_list_tail([_|Y], ACC, R):-
+	ACC1 is ACC+1,
+	size_list_tail(Y, ACC1, R).
+
+erase_one(_, [],[]).
+erase_one(X,[X|Y],Y).
+erase_one(X,[A|B],[A|R]):-
+	(X=\=A),
+	erase_one(X,B,R).
+
+erase_all(_, [],[]).
+erase_all(X,[X|Y],R):-
+	erase_all(X,Y,R).
+erase_all(X,[A|B],[A|R1]):-
+	(X=\=A),
+	erase_all(X,B,R1),
+        !.
+
+find(X,[X|_]).
+find(X,[_|B]):-
+    find(X,B),
+    !.
+no_repet([],[]).
+no_repet([A|B],R):-
+    find(A,B),
+    no_repet(B,R).
+no_repet([A|B],[A|R]):-
+    not(find(A,B)),
+    no_repet(B,R),
+    !.
+
+concat([],A,A).
+concat([X|Y],L,[X|R]):-
+    concat(Y,L,R).
+
+
+maior([X],X).
+maior([X|[Y|Z]],R):-
+    (X>Y),
+    maior([X|Z],R).
+maior([X|[Y|Z]],R):-
+    (Y>=X),
+    maior([Y|Z],R).
+
+menor([X],X).
+menor([X|[Y|Z]],R):-
+    (X<Y),
+    menor([X|Z],R).
+menor([X|[Y|Z]],R):-
+    (X>=Y),
+    menor([Y|Z],R).
+
+pegar([],_,[]).
+pegar([A|B],L,[X|R]):-
+    n_esimo(A,L,X),
+    pegar(B,L,R).
+
+pegar_mine([],_,_,[]).
+pegar_mine([A|B],[L|R],I, [L|ANS]):-
+    (A=I),
+    I1 is I+1,
+    pegar_mine(B,R,I1,ANS).
+
+pegar_mine([A|B],[_|R],I, ANS):-
+    (A=\=I),
+    I1 is I+1,
+    pegar_mine([A|B],R,I1,ANS).
+
+pegar_mine(POS,L,ANS):- %% DROP I PARAMETER
+    pegar_mine(POS,L,1,ANS),
+    !.
+
+push_front(X,[A|B],[X|[A|B]]).
+
+push_pos(X,1,L,[X|L]).
+push_pos(X,N,[A|B],[A|R]):-
+   N1 is N-1,
+   push_pos(X,N1,B,R).
+
+inverte([],[]).
+inverte([A|B],R):-
+   inverte(B,R1),
+   concat(R1,[A],R).
+
+substitui(_,_,[],[]).
+substitui(X,Y,[A|B],[Y|R]):-
+      (A==X),
+      substitui(X,Y,B,R),
+      !.
+substitui(X,Y,[A|B],[A|R]):-
+      (A=\=X),
+      substitui(X,Y,B,R),
+      !.
+
+duplica_todos([],[]).
+duplica_todos([A|B],[A|[A|R]]):-
+    duplica_todos(B,R).
+
+duplica_um(_,[],[]).
+duplica_um(X,[X|B],[X|[X|R]]):-
+    duplica_um(X, B,R), !.
+duplica_um(X,[A|B],[A|R]):-
+   duplica_um(X,B,R), !.
+
+pa(A,_,1,A).
+pa(A,Q,N,R):-
+  N1 is N-1,
+  pa(A,Q,N1,R1),
+  R is R1+Q.
+
+somaPA(A,Q,N,SUM):-
+  somaPA(A,Q,N,R,SUM).
+
+somaPA(A,_,1,A, A).
+somaPA(A,Q,N,R, SUM):-
+  N1 is N-1,
+  somaPA(A,Q,N1,R1, SUM1),
+  R is R1+Q,
+  SUM is SUM1+R.
+
+sumpa(A,Q,N,SUM):-
+  pa(A,Q,N,R),
+  SUM is (A+R)*N/2,!.
+
+n_esimo(1,X,[X|Y]).
+n_esimo(N,R,[X|Y]):-
+  N2 is N-1,
+  n_esimo(N2,R,Y).
+
+no_elem([X],1).
+no_elem([X|Y],R):-
+  no_elem(Y,R2),
+  R is R2+1.
+
+tire_elem(_,[],[]):-!.
+tire_elem(X,[X|Y],Y):-!.
+tire_elem(E,[Y|Z],[Y|R]):-
+  tire_elem(E,Z,R).
+
+tire_todos(_,[],[]).
+tire_todos(X,[X|Y],R):-
+  tire_todos(X,Y,R).
+tire_todos(E,[Y|Z],[Y|R]):-
+  tire_todos(E,Z,R).
+
+tire_repet([],[]).
+tire_repet(X,X)
+
+concatena([],L,L).
+concatena(L,[],L).
+concatena([X|Y],L,R):-
+    concatena(Y,L,R1),
+    R = [X|R1].
+
+maior(X,X,X).
+maior(X,Y,X):-
+  X>Y.
+maior(X,Y,Y):-
+  Y>X.
+
+maiorlista([X],X).
+maiorlista([X|Y],R):-
+  maior(X,Y,R).
+
+
+list(L):-
+    see(L),
+    processa_arquivo,seen.
+
+processa_arquivo:-
+    read(Termo),
+    processa_termo(Termo).
+
+processa_termo(end_of_file):-!.
+
+processa_termo(Termo):-
+    trata(Termo),
+    processa_arquivo.
+
+trata(Termo):-
+    write(Termo),nl.
+
+
+% COPIAR DOIS
+copia(X,Y) :-
+    see(X),
+    tell(Y),
+    read(Frase),
+    faz_copia_de(Frase),
+    seen,
+    told.
+
+faz_copia_de(Frase) :-
+    write(Frase),
+    write(‘.’),
+    nl,
+    Frase=end_of_file,!.
+
+
+faz_copia_de(Frase) :-
+    read(Outra_Frase),
+    faz_copia_de(Outra_Frase).
+
+
+
+%OBTEM SIM OU NAO
+
+obtemSN(Resultado):-
+    get(Char),
+    get0(_), %ignora o enter
+    digitado(Char,Resultado).
+
+obtemSN(Resultado):- nl,
+    write('Digite S ou N :'),
+    obtemSN(Resultado).
+
+digitado(83,sim).
+digitado(115,sim).
+digitado(78,nao).
+digitado(110,nao).
+
+
+% P01 (*): Find the last element of a list
+% caso base será quando o ultimo elemento for o unico elemento da lista
+my_last(X,[X]):-!.
+my_last(X,[_|L]):-
+    my_last(X,L).
+
+last_but_one(X,[X,_]).
+last_but_one(X,[_,Y|Ys]):-
+    last_but_one(X,[Y|Ys]).
+
+% P03 (*): Encontrar o elemento K na lista.
+% Caso base sera quando o
+element_at(X,[X|_],1).
+element_at(X,[_|L],K):-
+    K > 1,
+    K1 is K - 1,
+    element_at(X,L,K1).
+
+
+% P04 (*): Find the number of elements of a list.
+% Caso base sera quando a lista for vazia
+my_length([],0).
+my_length([_|L],N) :-
+    my_length(L,N1),
+    N is N1 + 1.
+
+
+my_reverse(L1,L2):-
+    my_rev(L1,L2,[]).
+
+my_rev([],L2,L2) :- !.
+my_rev([X|Xs],L2,Acc):-
+    my_rev(Xs,L2,[X|Acc]).
+
+
+
+pertence(X,[X|_]).
+pertence(X,[_|Y]):-
+    pertence(X,Y).
+
+
+ultimo([X],X).
+ultimo([_|Y], U):-
+    ultimo(Y,U).
+
+
+
